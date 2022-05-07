@@ -255,3 +255,33 @@ SELECT user_id,
 	ROUND(MAX(CAST(bmi AS NUMERIC)),3) AS max_bmi
 FROM weight_log
 GROUP BY user_id;
+
+-- average heart rate per user
+SELECT user_id, 
+	ROUND(CAST(AVG(five_second_heart_rate) AS NUMERIC),3) AS avg_heart_rate 
+FROM heart_rate
+GROUP BY user_id;
+
+-- median heart rate per user
+SELECT user_id, 
+	ROUND(median(CAST(five_second_heart_rate AS NUMERIC)),3) AS median_heart_rate 
+FROM heart_rate
+GROUP BY user_id;
+
+-- minimum heart rate data per user
+SELECT user_id, 
+	ROUND(MIN(CAST(five_second_heart_rate AS NUMERIC)),3) AS min_heart_rate 
+FROM heart_rate
+GROUP BY user_id;
+
+-- maximum heart rate per user
+SELECT user_id, 
+	ROUND(MAX(CAST(five_second_heart_rate AS NUMERIC)),3) AS max_heart_rate 
+FROM heart_rate
+GROUP BY user_id;
+
+-- total heart rate per user
+SELECT user_id, 
+	ROUND(SUM(CAST(five_second_heart_rate AS NUMERIC)),3) AS max_heart_rate 
+FROM heart_rate
+GROUP BY user_id;
