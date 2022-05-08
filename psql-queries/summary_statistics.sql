@@ -285,3 +285,30 @@ SELECT user_id,
 	ROUND(SUM(CAST(five_second_heart_rate AS NUMERIC)),3) AS max_heart_rate 
 FROM heart_rate
 GROUP BY user_id;
+
+-- avg activity by dow
+SELECT EXTRACT(isodow from activity_date) AS day_of_week,
+	ROUND(CAST(AVG(total_steps) AS NUMERIC),3) AS avg_steps, 
+	ROUND(CAST(AVG(total_distance) AS NUMERIC),3) AS avg_distance,
+	ROUND(CAST(AVG(tracker_distance) AS NUMERIC),3) AS avg_tracker_distance, 
+	ROUND(CAST(AVG(logged_activities_distance) AS NUMERIC),3) AS avg_logged_distance,
+	ROUND(CAST(AVG(very_active_distance) AS NUMERIC),3) AS avg_very_active_distance,
+	ROUND(CAST(AVG(moderately_active_distance) AS NUMERIC),3) AS avg_mod_distance,
+	ROUND(CAST(AVG(lightly_active_distance) AS NUMERIC),3) AS avg_light_distance,
+	ROUND(CAST(AVG(sedentary_active_distance) AS NUMERIC),3) AS avg_sed_distance,
+	ROUND(CAST(AVG(very_active_min) AS NUMERIC),3) AS avg_very_active_min, 
+	ROUND(CAST(AVG(moderately_active_min) AS NUMERIC),3) AS avg_mod_min,
+	ROUND(CAST(AVG(lightly_active_min) AS NUMERIC),3) AS avg_light_min,
+	ROUND(CAST(AVG(sedentary_active_min) AS NUMERIC),3) AS avg_sed_min, 
+	ROUND(CAST(AVG(calories) AS NUMERIC),3) AS avg_calories
+FROM daily_activity
+GROUP BY day_of_week
+ORDER BY day_of_week;
+
+-- avg sleep data by dow
+SELECT EXTRACT(isodow from sleep_date) AS day_of_week,
+	ROUND(CAST(AVG(minutes_asleep) AS NUMERIC),3) AS avg_min_asleep, 
+	ROUND(CAST(AVG(minutes_in_bed) AS NUMERIC),3) AS avg_min_in_bed 
+FROM daily_sleep_data
+GROUP BY day_of_week
+ORDER BY day_of_week;
