@@ -128,7 +128,9 @@ ggplot(data=combined_data1, aes(x=TotalMinutesAsleep, y=SedentaryMinutes)) +
 # most things drawn with combined_data2 does not produce useful results due to 
 # small unique Id sample size.
 
-ggplot(data=combined_data1, aes(y=Calories, x=SedentaryMinutes, colour=Calories)) + 
+combined_data1$NonSleepingSedentaryMinutes <- combined_data1$TotalTimeInBed - 
+  combined_data1$SedentaryMinutes
+ggplot(data=combined_data1, aes(y=Calories, x=NonSleepingSedentaryMinutes, colour=Calories)) + 
   geom_point() + geom_smooth()
 
 combined_data1$ActiveMinutes <- combined_data1$VeryActiveMinutes + 
@@ -139,4 +141,19 @@ ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=Calories)) +
 ggplot(data=combined_data1, aes(y=TotalSteps, x=ActiveMinutes, colour=Calories)) + 
   geom_point() + geom_smooth()
 ggplot(data=combined_data1, aes(y=TotalMinutesAsleep, x=ActiveMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth()
+
+
+#meaningful charts and graphs
+
+ggplot(data=combined_data1, aes(y=TotalSteps, x=ActiveMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth()
+
+ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth()
+
+ggplot(data=combined_data1, aes(y=Calories, x=NonSleepingSedentaryMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth()
+
+ggplot(data=combined_data2, aes(y=Calories, x=TotalSteps, colour=ObesityLevel)) +
   geom_point() + geom_smooth()
