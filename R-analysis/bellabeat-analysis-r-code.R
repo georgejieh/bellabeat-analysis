@@ -22,14 +22,14 @@ daily_sleep$Id <- as.factor(daily_sleep$Id)
 daily_activity$Id <- as.factor(daily_activity$Id)
 weight_log$Id <- as.factor(weight_log$Id)
 
-# calculate height of participants
+# calculate height of participants and set BMI standards
 weight_log$Height <- sqrt(weight_log$WeightKg/weight_log$BMI)*100
 weight_log$ObesityLevel <- ifelse(weight_log$BMI < 18, 'UnderWeight', 
-                                  ifelse(weight_log$BMI >= 18 & weight_log$BMI <= 24,
+                                  ifelse(weight_log$BMI >= 18 & weight_log$BMI < 25,
                                          'HealthyWeight', 
-                                         ifelse(weight_log$BMI >= 25 & weight_log$BMI <= 29, 
+                                         ifelse(weight_log$BMI >= 25 & weight_log$BMI < 30, 
                                                 'OverWeight',
-                                                ifelse(weight_log$BMI >= 30 & weight_log$BMI <= 39,
+                                                ifelse(weight_log$BMI >= 30 & weight_log$BMI < 40,
                                                        'Obese', 'Severely Obese'))))
 
 # set obesity level as factor
@@ -40,7 +40,7 @@ n_distinct(daily_activity$Id)
 n_distinct(daily_sleep$Id)
 n_distinct(weight_log$Id)
 
-# number of observastion
+# number of observations
 nrow(daily_activity)
 nrow(daily_sleep)
 nrow(weight_log)
@@ -73,9 +73,9 @@ ggplot(data=weight_log, aes(x=Height, fill=Id)) +
   facet_grid(.~ObesityLevel)
 
 # combining datasets
-combined_data1 <- merge(daily_sleep, daily_activity, by="Id")
+combined_data1 <- merge(daily_activity, daily_sleep, by = c('Id', 'Date'), all.x= TRUE)
 n_distinct(combined_data1$Id)
-combined_data2 <- merge(weight_log, combined_data1, by="Id")
+combined_data2 <- merge(combined_data1, weight_log, by=c('Id', 'Date'))
 n_distinct(combined_data2$Id)
 head(combined_data2)
 nrow(combined_data2)
@@ -84,7 +84,8 @@ str(combined_data1)
 
 # exploring data of combined datasets
 ggplot(data=combined_data2, aes(x=SedentaryMinutes, y=BMI, 
-                               colour=ObesityLevel)) + geom_point()
+                                fill=ObesityLevel)) + geom_boxplot() +
+  geom_jitter()
 
 ggplot(data=combined_data2, aes(x=SedentaryMinutes, y=Height, 
                                 colour=ObesityLevel)) + geom_point()
@@ -93,13 +94,21 @@ ggplot(data=combined_data2, aes(x=SedentaryMinutes, y=WeightKg,
                                 colour=ObesityLevel)) + geom_point()
 
 ggplot(data=combined_data2, aes(x=SedentaryMinutes, y=TotalSteps, 
-                                colour=ObesityLevel)) + geom_point()
+                                colour=ObesityLevel)) + geom_point() + 
+  geom_smooth() + ylim(c(0,20500))
 
 ggplot(data=combined_data1, aes(x=TotalTimeInBed, y=SedentaryMinutes, 
-                                )) + geom_point() + geom_smooth()
+                                )) + geom_point()
 
 ggplot(data=combined_data2, aes(x=TotalTimeInBed, y=TotalSteps, 
-                                colour=ObesityLevel)) + geom_point() + geom_smooth()
+                                colour=ObesityLevel)) + geom_point()
+
+plot_data <- combined_data2 %>% filter(TotalTimeInBed != SedentaryMinutes)
+ggplot(data=plot_data, aes(x=ObesityLevel, y=SedentaryMinutes, 
+                                fill=ObesityLevel)) + geom_boxplot()
+
+ggplot(data=combined_data2, aes(x=ObesityLevel, y=TotalSteps, 
+                           fill=Id)) + geom_boxplot()
 
 ggplot(data=combined_data1, aes(x=TotalTimeInBed, y=TotalSteps, 
                                 )) + geom_point() + geom_smooth()
@@ -111,4 +120,23 @@ ggplot(data=daily_activity, aes(y=Calories, x=TotalSteps, colour=Calories)) +
   geom_point() + geom_smooth()
 
 ggplot(data=combined_data1, aes(y=Calories, x=VeryActiveMinutes, colour=Calories)) +
+  geom_point() + geom_smooth()
+
+ggplot(data=combined_data1, aes(x=TotalMinutesAsleep, y=SedentaryMinutes)) +
+  geom_point() + geom_smooth()
+
+# most things drawn with combined_data2 does not produce useful results due to 
+# small unique Id sample size.
+
+ggplot(data=combined_data1, aes(y=Calories, x=SedentaryMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth()
+
+combined_data1$ActiveMinutes <- combined_data1$VeryActiveMinutes + 
+  combined_data1$FairlyActiveMinutes + combined_data1$LightlyActiveMinutes
+
+ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth()
+ggplot(data=combined_data1, aes(y=TotalSteps, x=ActiveMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth()
+ggplot(data=combined_data1, aes(y=TotalMinutesAsleep, x=ActiveMinutes, colour=Calories)) + 
   geom_point() + geom_smooth()
