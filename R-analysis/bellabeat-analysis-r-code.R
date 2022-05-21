@@ -128,13 +128,16 @@ ggplot(data=combined_data1, aes(x=TotalMinutesAsleep, y=SedentaryMinutes)) +
 # most things drawn with combined_data2 does not produce useful results due to 
 # small unique Id sample size.
 
-combined_data1$NonSleepingSedentaryMinutes <- combined_data1$TotalTimeInBed - 
-  combined_data1$SedentaryMinutes
+combined_data1$NonSleepingSedentaryMinutes <- combined_data1$SedentaryMinutes - 
+  combined_data1$TotalTimeInBed
 ggplot(data=combined_data1, aes(y=Calories, x=NonSleepingSedentaryMinutes, colour=Calories)) + 
   geom_point() + geom_smooth()
 
 combined_data1$ActiveMinutes <- combined_data1$VeryActiveMinutes + 
   combined_data1$FairlyActiveMinutes + combined_data1$LightlyActiveMinutes
+
+combined_data2$ActiveMinutes <- combined_data2$VeryActiveMinutes + 
+  combined_data2$FairlyActiveMinutes + combined_data2$LightlyActiveMinutes
 
 ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=Calories)) + 
   geom_point() + geom_smooth()
@@ -143,17 +146,28 @@ ggplot(data=combined_data1, aes(y=TotalSteps, x=ActiveMinutes, colour=Calories))
 ggplot(data=combined_data1, aes(y=TotalMinutesAsleep, x=ActiveMinutes, colour=Calories)) + 
   geom_point() + geom_smooth()
 
+ggplot(data=combined_data2, aes(x=ActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=Calories)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=VeryActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=FairlyActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=LightlyActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
 
 #meaningful charts and graphs
 
 ggplot(data=combined_data1, aes(y=TotalSteps, x=ActiveMinutes, colour=Calories)) + 
-  geom_point() + geom_smooth()
+  geom_point()
 
 ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=Calories)) + 
   geom_point() + geom_smooth()
 
-ggplot(data=combined_data1, aes(y=Calories, x=NonSleepingSedentaryMinutes, colour=Calories)) + 
-  geom_point() + geom_smooth()
+ggplot(data=combined_data1, aes(y=TotalSteps, x=NonSleepingSedentaryMinutes, colour=Calories)) + 
+  geom_point() + xlim(c(0,1000)) + ylim(c(0,25000)) + geom_smooth()
 
 ggplot(data=combined_data2, aes(y=Calories, x=TotalSteps, colour=ObesityLevel)) +
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth(fill=NA)
+
+ggplot(data=combined_data2, aes(x=ActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=Calories)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=VeryActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=FairlyActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=LightlyActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
