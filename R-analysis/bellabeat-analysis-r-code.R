@@ -155,19 +155,154 @@ ggplot(data=combined_data2, aes(x=LightlyActiveMinutes)) + geom_density(aes(fill
 #meaningful charts and graphs
 
 ggplot(data=combined_data1, aes(y=TotalSteps, x=ActiveMinutes, colour=Calories)) + 
-  geom_point()
+  geom_point() + xlim(c(1,560)) +
+  xlab("Minutes Active") + ylab("Number of Steps") + 
+  labs(colour="Calories Burned") +
+  ggtitle("Daily Calories Burned Based on Length of Activity and Total Steps") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
 
 ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=Calories)) + 
-  geom_point() + geom_smooth()
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,560)) +
+  xlab("Minutes Active") + 
+  ylab("Calories Burned") + labs(colour="Calories Burned") +
+  ggtitle("Daily Calories Burned Based on Minutes Active") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+combined_data1$PercentageofActiveTimeOnLightActivity <- (combined_data1$LightlyActiveMinutes /
+                                                           combined_data1$ActiveMinutes) * 100
+
+combined_data1$PercentageofActiveTimeOnHigherActivity <- ((combined_data1$FairlyActiveMinutes + 
+                                                             combined_data1$VeryActiveMinutes)/
+                                                           combined_data1$ActiveMinutes) * 100
+
+ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=PercentageofActiveTimeOnLightActivity)) + 
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,560)) +
+  xlab("Minutes Active") + 
+  ylab("Calories Burned") + labs(colour="% of Active Time Lightly Active") +
+  ggtitle("Daily Calories Burned Based on Minutes Active (Light Activity)") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=PercentageofActiveTimeOnHigherActivity)) + 
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,560)) +
+  xlab("Minutes Active") + 
+  ylab("Calories Burned") + labs(colour="% of Active Time Exerising") +
+  ggtitle("Daily Calories Burned Based on Minutes Active (Exercise)") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data1, aes(y=Calories, x=PercentageofActiveTimeOnHigherActivity, colour=Calories)) + 
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,100)) +
+  xlab("% of Active Time Exercising") + 
+  ylab("Calories Burned") + labs(colour="Calories Burned") +
+  ggtitle("Daily Calories Burned Based on % of Active Time Spent Exercising") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
 
 ggplot(data=combined_data1, aes(y=TotalSteps, x=NonSleepingSedentaryMinutes, colour=Calories)) + 
-  geom_point() + xlim(c(0,1000)) + ylim(c(0,25000)) + geom_smooth()
+  geom_point() + xlim(c(0,1000)) + ylim(c(0,25000)) + geom_smooth(fill=NA) +
+  xlab("Minutes Sedentary While Not In Bed") + 
+  ylab("Total Steps Taken") + labs(colour="Calories Burned") +
+  ggtitle("Daily Steps Taken In Relation to Total Time Sedentary While Not In Bed") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
 
 ggplot(data=combined_data2, aes(y=Calories, x=TotalSteps, colour=ObesityLevel)) +
-  geom_point() + geom_smooth(fill=NA)
+  geom_point() + geom_smooth(fill=NA) +
+  xlab("Total Steps Taken") + 
+  ylab("Calories Burned") + labs(colour="Obesity Level") +
+  ggtitle("Daily Calories Burned Based on Total Steps Taken (Obesity Level)") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
 
-ggplot(data=combined_data2, aes(x=ActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
-ggplot(data=combined_data2, aes(x=Calories)) + geom_density(aes(fill=ObesityLevel))
-ggplot(data=combined_data2, aes(x=VeryActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
-ggplot(data=combined_data2, aes(x=FairlyActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
-ggplot(data=combined_data2, aes(x=LightlyActiveMinutes)) + geom_density(aes(fill=ObesityLevel))
+ggplot(data=combined_data2, aes(x=ActiveMinutes)) + 
+  geom_density(aes(fill=ObesityLevel), alpha=0.5) +
+  xlab("Minutes Active") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Active Minutes Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data2, aes(x=Calories)) + 
+  geom_density(aes(fill=ObesityLevel), alpha=0.5) +
+  xlab("Calories Burned") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Calories Burned Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+combined_data2$ExerciseMinutes <- combined_data2$VeryActiveMinutes + 
+  combined_data2$FairlyActiveMinutes
+
+ggplot(data=combined_data2, aes(x=ExerciseMinutes)) + 
+  geom_density(aes(fill=ObesityLevel), alpha=0.5) +
+  xlab("Minutes Exercising") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Minutes Exercising Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data2, aes(x=LightlyActiveMinutes)) + 
+  geom_density(aes(fill=ObesityLevel), alpha = 0.5) +
+  xlab("Lightly Active Minutes") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Lightly Active Minutes Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
