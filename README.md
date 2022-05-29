@@ -292,7 +292,7 @@ CaloriesBurned=\frac{Duration \times (0.4472 \times HeartRate - 0.1263 \times We
 $$
 
 
-If the system contains data for VO~2~ max than the equation is slightly cleaner. First we need to know how VO~2~ max is calculated. The VO~2~ max equation is as follows:
+If the system contains data for VO$_2$ max than the equation is slightly cleaner. First we need to know how VO~2~ max is calculated. The VO$_2$ max equation is as follows:
 
 
 $$
@@ -317,3 +317,4 @@ $$
 
 
 Without calulating examples with this equation we still have the issue where a person's weight and age are variables in determining calories burned. However since these information is more obtainable than accurate METs, which varies based on type of activity, it is the more probably method for the fitbit trackers to keep track of the amount of calories burned.This is reinforced by the joining of the heart rate table and the activity per minute table, where increase in heart rate directly influences the amount of calories burned per minute. 
+
