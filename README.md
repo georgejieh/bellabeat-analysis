@@ -276,7 +276,7 @@ $$
 
 That individual will burn 588 calories for the hour. This brings back to my point that since activity type and the weight of an individual is a variable in calculating amount of calories burned, it is difficult to simply say having a daily amount of steps over X amount will burn X amount of calories. However looking at how METs is tracked in the tables, fitbit is not tracking METs based on common knowledge since the minimum METs that fitbit set per user is 10, which based on various reference charts found online is equivalent to running a 10 minute mile. This we know is impossible considering the user is sedentary at the time. 
 
-Considering the METs that fitbit recorded is useless in determining calories burned per minute, the only other value we have that can determine calories burned is heart rate. With heart rate, depending on if the system knows your VO~2~ max and your gender, different equations would be used. If the system doesn't track VO~2~ max the following equation is used to calculate total calories burned for male:
+Considering the METs that fitbit recorded is useless in determining calories burned per minute, the only other value we have that can determine calories burned is heart rate. With heart rate, depending on if the system knows your VO$_2$ max and your gender, different equations would be used. If the system doesn't track VO$_2$ max the following equation is used to calculate total calories burned for male:
 
 
 $$
@@ -292,7 +292,7 @@ CaloriesBurned=\frac{Duration \times (0.4472 \times HeartRate - 0.1263 \times We
 $$
 
 
-If the system contains data for VO$_2$ max than the equation is slightly cleaner. First we need to know how VO~2~ max is calculated. The VO$_2$ max equation is as follows:
+If the system contains data for VO$_2$ max than the equation is slightly cleaner. First we need to know how VO$_2$ max is calculated. The VO$_2$ max equation is as follows:
 
 
 $$
@@ -300,7 +300,7 @@ VO_2Max=15.3 \times \frac{220 - Age}{RestingHeartRate}
 $$
 
 
-With VO~2~max value the equation transforms to the following for male:
+With VO$_2$max value the equation transforms to the following for male:
 
 
 $$
