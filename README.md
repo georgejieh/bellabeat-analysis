@@ -719,3 +719,8 @@ From these graphs we learn the following:
 
 From all of this we have quite a few of our business questions answered. The story that our visualization tells us is that people that are healthy uses these tracking tools to make sure they do the doctors recommended amount to stay healthy, while people that are overweight but not to the point of being completely obese, they use tracking tools to lose weight. 
 
+## Act Phase
+
+From our analysis we can draw a number of conclusions, such as exercising more burns more calories, not all types of activities are created equal when it comes to losing weight, and calories burned doesn't have a obvious direct correlation with the numbers of steps you take in a day. However none of these conclusions is as important as the tracker usage trends discovered for healthy individuals and overweight individuals. 
+
+With these two trends there are targeted marketing opportunities. To target the overweight public that wants to lose weight, there can be marketing done with weight loss in mind, while for the healthy public, the products can be marketed as something that helps you keep track and make sure you are meeting your doctors recommendations.
