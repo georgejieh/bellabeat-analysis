@@ -318,3 +318,75 @@ $$
 
 Without calulating examples with this equation we still have the issue where a person's weight and age are variables in determining calories burned. However since these information is more obtainable than accurate METs, which varies based on type of activity, it is the more probably method for the fitbit trackers to keep track of the amount of calories burned.This is reinforced by the joining of the heart rate table and the activity per minute table, where increase in heart rate directly influences the amount of calories burned per minute. 
 
+#### R Prossessing and Analysis
+
+To start with R we will need to import the tables we would like to work with into R as data frames. To do so we've prepared the R environment as such:
+
+```R
+# install and activate necessary packages
+install.packages('tidyverse')
+library(tidyverse)
+
+# import data
+setwd("/.../bellabeat-analysis/R-analysis/csv-for-import")
+getwd() 
+daily_sleep <- read.csv("daily_sleep_data.csv", stringsAsFactors = T)
+weight_log <- read.csv("weight_log.csv", stringsAsFactors = T)
+daily_activity <- read.csv("daily_activity.csv", stringsAsFactors = T)
+```
+
+Then we check the data with the following codes:
+
+```R
+str(daily_sleep)
+str(daily_activity)
+str(weight_log)
+```
+
+From this we can see that not all categories we would like to have set as factor became factors. To fix this we enter the following:
+
+```R
+daily_sleep$Id <- as.factor(daily_sleep$Id) 
+daily_activity$Id <- as.factor(daily_activity$Id)
+weight_log$Id <- as.factor(weight_log$Id)
+```
+
+Now there are some interesting calculated data we would like to add. One of such calculation is height of each user derived from weight and BMI. The mathematical equation is as such:
+
+
+$$
+HeightCM = \sqrt{\frac{WeightKg}{BMI}} \times 100
+$$
+
+
+To represent this in R and insert it into the weight_log data frame we use the following equation:
+
+```R
+weight_log$Height <- sqrt(weight_log$WeightKg/weight_log$BMI)*100
+```
+
+Another bit of calculated data we would want to add into our data frame regarding the weight_log will be BMI range classification. Different health organizations around the world will use different BMI ranges to determine what is considered a healthy BMI. Their differences are minimal, within 0.01 to 0.5 from each other, so for our purposes we can take the most commonly used ranges. The obesity ranges are as follows:
+
+- Underweight is BMI < 18
+- Healthy Weight is BMI $\geq$18 but BMI < 25
+- Overweight is BMI $\geq$ 25 but BMI < 30
+- Obese is BMI $\geq$ 30 but BMI < 40
+- Severely Obese is BMI $\geq$ 40
+
+There are some obvious issues with BMI being used to calculate how healthy someone is, since weight alone doesn't determine obesity. Muscles weight more than fat, so an individual that is particularly muscular could have a BMI that is outside of the healthy range, but a muscular person is arguably much more healthy than an individual that have the same BMI but is full of body fat. A better determination of obesity would be a direct calculation of an individual's body fat percentage. However, for our purposes we are using the obesity levels to categorize users to see if there are any differences in activity between each category. 
+
+We used the following equation to insert the obesity level/categories into the data frame, and we also made the column into a factor:
+
+```R
+weight_log$ObesityLevel <- ifelse(weight_log$BMI < 18, 'UnderWeight', 
+                                  ifelse(weight_log$BMI >= 18 & weight_log$BMI < 25,
+                                        'HealthyWeight', 
+                                         ifelse(weight_log$BMI >= 25 & weight_log$BMI < 30, 
+                                               'OverWeight',
+                                               ifelse(weight_log$BMI >= 30 & 
+                                                      weight_log$BMI < 40,
+                                                      'Obese', 'Severely Obese'))))
+weight_log$ObesityLevel <- as.factor(weight_log$ObesityLevel)
+```
+
+Once we start combing the data frames later on, we will also be calculating information such as percentage of time active spent on light acitivities, or percentage of active time spent exerising.
