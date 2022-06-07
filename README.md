@@ -669,3 +669,27 @@ ggplot(data=combined_data2, aes(x=LightlyActiveMinutes)) +
         plot.title = element_text(size=18, hjust = 0.5))
 ```
 
+The above code generates the following charts and graphs:
+
+![img](https://i.imgur.com/YkhkkyU.png)
+
+![img](https://i.imgur.com/TL4MBWm.png)
+
+![img](https://i.imgur.com/yPAwKQC.png)
+
+![img](https://i.imgur.com/B6rqcbG.png)
+
+![img](https://i.imgur.com/kLY8ssS.png)
+
+![img](https://i.imgur.com/fgw22MI.png)
+
+![img](https://i.imgur.com/PWbbbhG.png)
+
+![img](https://i.imgur.com/zOI3rSR.png)
+
+![img](https://i.imgur.com/z49oSx4.png)
+
+![img](https://i.imgur.com/m0Gc2ct.png)
+
+![img](https://i.imgur.com/DxELZco.png)
+
