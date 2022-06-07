@@ -390,3 +390,282 @@ weight_log$ObesityLevel <- as.factor(weight_log$ObesityLevel)
 ```
 
 Once we start combing the data frames later on, we will also be calculating information such as percentage of time active spent on light acitivities, or percentage of active time spent exerising.
+
+Now we check the data integrity by pulling data statistics that we already know the answer to from SQL:
+
+```R
+n_distinct(daily_activity$Id)
+n_distinct(daily_sleep$Id)
+n_distinct(weight_log$Id)
+nrow(daily_activity)
+nrow(daily_sleep)
+nrow(weight_log)
+```
+
+The results were 33, 24, 8, 940, 413, and 67 respectively, which matches up directly with the numbers provided by SQL.
+
+Then we ran some quick summary statistics in R. The nice thing with R is that by using a single function we can get all the summary statistics information we would want that would have taken multiple or very long queries to obtain. The code we used was the following:
+
+```R
+daily_activity %>% 
+  select(TotalSteps, TotalDistance, TrackerDistance, LoggedActivitiesDistance,
+         VeryActiveDistance, ModeratelyActiveDistance, LightActiveDistance,
+         SedentaryActiveDistance, VeryActiveMinutes, FairlyActiveMinutes,
+         LightlyActiveMinutes, SedentaryMinutes, Calories) %>%
+  summary()
+
+daily_sleep %>% 
+  select(TotalMinutesAsleep, TotalTimeInBed) %>% 
+  summary()
+
+weight_log %>% 
+  select(WeightKg, WeightPounds, BMI, Height, IsManualReport) %>%
+summary()
+```
+
+The printed results are as follows:
+
+```
+ TotalSteps    TotalDistance    TrackerDistance  LoggedActivitiesDistance VeryActiveDistance
+ Min.   :    0   Min.   : 0.000   Min.   : 0.000   Min.   :0.0000           Min.   : 0.000    
+ 1st Qu.: 3790   1st Qu.: 2.620   1st Qu.: 2.620   1st Qu.:0.0000           1st Qu.: 0.000    
+ Median : 7406   Median : 5.245   Median : 5.245   Median :0.0000           Median : 0.210    
+ Mean   : 7638   Mean   : 5.490   Mean   : 5.475   Mean   :0.1082           Mean   : 1.503    
+ 3rd Qu.:10727   3rd Qu.: 7.713   3rd Qu.: 7.710   3rd Qu.:0.0000           3rd Qu.: 2.053    
+ Max.   :36019   Max.   :28.030   Max.   :28.030   Max.   :4.9421           Max.   :21.920   
+ 
+Mod...ActiveDist... Light...Dist... Sed...ActiveDist... VeryActiveMin... FairlyActiveMin...
+ Min.   :0.0000     Min.   : 0.000  Min.   :0.000000    Min.   :  0.00    Min.   :  0.00     
+ 1st Qu.:0.0000     1st Qu.: 1.945  1st Qu.:0.000000    1st Qu.:  0.00    1st Qu.:  0.00     
+ Median :0.2400     Median : 3.365  Median :0.000000    Median :  4.00    Median :  6.00     
+ Mean   :0.5675     Mean   : 3.341  Mean   :0.001606    Mean   : 21.16    Mean   : 13.56     
+ 3rd Qu.:0.8000     3rd Qu.: 4.782  3rd Qu.:0.000000    3rd Qu.: 32.00    3rd Qu.: 19.00     
+ Max.   :6.4800     Max.   :10.710  Max.   :0.110000    Max.   :210.00    Max.   :143.00     
+ 
+ LightlyActiveMinutes SedentaryMinutes    Calories   
+ Min.   :  0.0        Min.   :   0.0   Min.   :   0  
+ 1st Qu.:127.0        1st Qu.: 729.8   1st Qu.:1828  
+ Median :199.0        Median :1057.5   Median :2134  
+ Mean   :192.8        Mean   : 991.2   Mean   :2304  
+ 3rd Qu.:264.0        3rd Qu.:1229.5   3rd Qu.:2793  
+ Max.   :518.0        Max.   :1440.0   Max.   :4900  
+ 
+TotalMinutesAsleep TotalTimeInBed 
+ Min.   : 58.0      Min.   : 61.0  
+ 1st Qu.:361.0      1st Qu.:403.0  
+ Median :433.0      Median :463.0  
+ Mean   :419.5      Mean   :458.6  
+ 3rd Qu.:490.0      3rd Qu.:526.0  
+ Max.   :796.0      Max.   :961.0  
+ 
+    WeightKg       WeightPounds        BMI            Height      IsManualReport 
+ Min.   : 52.60   Min.   :116.0   Min.   :21.45   Min.   :152.4   Mode :logical  
+ 1st Qu.: 61.40   1st Qu.:135.4   1st Qu.:23.96   1st Qu.:160.1   FALSE:26       
+ Median : 62.50   Median :137.8   Median :24.39   Median :160.1   TRUE :41       
+ Mean   : 72.04   Mean   :158.8   Mean   :25.19   Mean   :168.5                  
+ 3rd Qu.: 85.05   3rd Qu.:187.5   3rd Qu.:25.56   3rd Qu.:182.8                  
+ Max.   :133.50   Max.   :294.3   Max.   :47.54   Max.   :182.8                   
+```
+
+From these data we can infer quite a few things:
+
+- All data that requires someone to conciously make a decision to log or requires people to do something for the equipment to log have minimum values higher than 0. Such as weight and sleep information.
+- Though various levels of activity history makes sense to have 0, but calories burned having a minimum of 0 doesn't make much sense since people can burn calories while sleeping as well.
+- Sedentary minutes and distance also having a minimum of 0 doesn't make sense as well, since a person won't be active 24 hours a day. The only explanation of this is if a person turns off their tracker when they are not exercising.
+- Our sample size to determine height is not large, only 8 people, but what is interesting is that our median height is 160.10 cm, which is very close to the world median height for women. There is a possibility that most users that used fitbit products to track weight and height are women.
+- On average the users logging their weight is on the upper end of healthy weight.
+- We also see there is very little Very Active and Fairly Active, also known as exercising, minutes, while majority of activity is sedentary. 
+
+After running the quick statistics we would need to start merging the data frame to make meaningful graphs that shows relationship between multiple dimensions. To combine the data we ran the following code:
+
+```R
+combined_data1 <- merge(daily_activity, daily_sleep, by = c('Id', 'Date'), all.x= TRUE)
+n_distinct(combined_data1$Id)
+combined_data2 <- merge(combined_data1, weight_log, by=c('Id', 'Date'))
+n_distinct(combined_data2$Id)
+```
+
+We did this in two steps and created two data frames because combining weight_log into the rest of the data removes too many data points, which will make sample size too small to find any trends. So most analysis will be done with combined_data1 while we will only use combined_data2 if we need the weight data.
+
+Before we can do further analysis, there are a few calulations we would like to do. First we want to calculate how much Sedentary minutes is actually sedentary, since if a user have their tracker on 24hrs, then some of the sedentary minutes tracked includes sleeping minutes. Though later we would find this this could cause isses since not all users have their activity trackers on 24/7, which causes some of these calculated data to have a negative value. The code we used to calculate non-sleeping sedentary minutes is as follows:
+
+```R
+combined_data1$NonSleepingSedentaryMinutes <- combined_data1$SedentaryMinutes - 
+  combined_data1$TotalTimeInBed
+```
+
+To make things easier for us during our analysis we also decided to combine all non-sedentary minutes categories into one active minutes category. Also we decided to break down activie minutes by creating a category of exerising minutes, which only included fairly active minutes and very active minutes. Lightly active minutes isn't considered as exercising because it can be triggered from people walking and moving about doing their regular day to day tasks.
+
+```R
+combined_data1$ActiveMinutes <- combined_data1$VeryActiveMinutes + 
+  combined_data1$FairlyActiveMinutes + combined_data1$LightlyActiveMinutes
+
+combined_data2$ActiveMinutes <- combined_data2$VeryActiveMinutes + 
+  combined_data2$FairlyActiveMinutes + combined_data2$LightlyActiveMinutes
+
+combined_data1$ExerciseMinutes <- combined_data1$VeryActiveMinutes + 
+  combined_data1$FairlyActiveMinutes
+  
+combined_data2$ExerciseMinutes <- combined_data2$VeryActiveMinutes + 
+  combined_data2$FairlyActiveMinutes
+```
+
+We then wanted some of the data represented as percentages instead of hard numbers.
+
+```R
+combined_data1$PercentageofActiveTimeOnLightActivity <- (combined_data1$LightlyActiveMinutes /
+                                                           combined_data1$ActiveMinutes) * 100
+
+combined_data1$PercentageofActiveTimeOnHigherActivity <- ((combined_data1$FairlyActiveMinutes + 
+                                                             combined_data1$VeryActiveMinutes)/
+                                                           combined_data1$ActiveMinutes) * 100
+```
+
+Once all these are set, we experimented with various graphs to find something that is meaningful. Out of all the graphs generated, the following are worth highlighting:
+
+```R
+ggplot(data=combined_data1, aes(y=TotalSteps, x=ActiveMinutes, colour=Calories)) + 
+  geom_point() + xlim(c(1,560)) +
+  xlab("Minutes Active") + ylab("Number of Steps") + 
+  labs(colour="Calories Burned") +
+  ggtitle("Daily Calories Burned Based on Length of Activity and Total Steps") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=Calories)) + 
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,560)) +
+  xlab("Minutes Active") + 
+  ylab("Calories Burned") + labs(colour="Calories Burned") +
+  ggtitle("Daily Calories Burned Based on Minutes Active") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=PercentageofActiveTimeOnLightActivity)) + 
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,560)) +
+  xlab("Minutes Active") + 
+  ylab("Calories Burned") + labs(colour="% of Active Time Lightly Active") +
+  ggtitle("Daily Calories Burned Based on Minutes Active (Light Activity)") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data1, aes(y=Calories, x=ActiveMinutes, colour=PercentageofActiveTimeOnHigherActivity)) + 
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,560)) +
+  xlab("Minutes Active") + 
+  ylab("Calories Burned") + labs(colour="% of Active Time Exerising") +
+  ggtitle("Daily Calories Burned Based on Minutes Active (Exercise)") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data1, aes(y=Calories, x=PercentageofActiveTimeOnHigherActivity, colour=Calories)) + 
+  geom_point() + geom_smooth(fill=NA) + xlim(c(1,100)) +
+  xlab("% of Active Time Exercising") + 
+  ylab("Calories Burned") + labs(colour="Calories Burned") +
+  ggtitle("Daily Calories Burned Based on % of Active Time Spent Exercising") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data1, aes(y=TotalSteps, x=NonSleepingSedentaryMinutes, 
+                                colour=Calories)) + 
+  geom_point() + xlim(c(0,1000)) + ylim(c(0,25000)) + geom_smooth(fill=NA) +
+  xlab("Minutes Sedentary While Not In Bed") + 
+  ylab("Total Steps Taken") + labs(colour="Calories Burned") +
+  ggtitle("Daily Steps Taken In Relation to Total Time Sedentary While Not In Bed") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data2, aes(y=Calories, x=TotalSteps, colour=ObesityLevel)) +
+  geom_point() + geom_smooth(fill=NA) +
+  xlab("Total Steps Taken") + 
+  ylab("Calories Burned") + labs(colour="Obesity Level") +
+  ggtitle("Daily Calories Burned Based on Total Steps Taken (Obesity Level)") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data2, aes(x=ActiveMinutes)) + 
+  geom_density(aes(fill=ObesityLevel), alpha=0.5) +
+  xlab("Minutes Active") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Active Minutes Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data2, aes(x=Calories)) + 
+  geom_density(aes(fill=ObesityLevel), alpha=0.5) +
+  xlab("Calories Burned") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Calories Burned Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data2, aes(x=ExerciseMinutes)) + 
+  geom_density(aes(fill=ObesityLevel), alpha=0.5) +
+  xlab("Minutes Exercising") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Minutes Exercising Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+
+ggplot(data=combined_data2, aes(x=LightlyActiveMinutes)) + 
+  geom_density(aes(fill=ObesityLevel), alpha = 0.5) +
+  xlab("Lightly Active Minutes") + 
+  ylab("Density") + labs(fill="Obesity Level") +
+  ggtitle("Daily Lightly Active Minutes Density Chart") +
+  theme(axis.title.x = element_text(size=12),
+        axis.title.y = element_text(size=12),
+        axis.text.x = element_text(size=10),
+        axis.text.y = element_text(size=10),
+        legend.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        plot.title = element_text(size=18, hjust = 0.5))
+```
+
