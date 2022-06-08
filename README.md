@@ -2,6 +2,10 @@
 
 ![img](https://i.imgur.com/0Dtva0S.png)
 
+- TOC
+{:toc}
+
+
 ## Introduction
 
 Bellabeat is a high-tech manufacturer of health-focused products for women. Currently it is a sucessful small business, but have potential to become a larger player in the global smart device market. The cofundouner and Chief Creative Officer of Bellabeat, Urska Srsen, believes that by analyzing smart device fitness data could help find new growth for the company. The case study wants us to pick one of Bellabeat's products and analyze comparible smart device data to gain insight into how consumers are using their smart devices. With the analysis come up with high-level recommendations for marketing strategy.
@@ -724,3 +728,4 @@ From all of this we have quite a few of our business questions answered. The sto
 From our analysis we can draw a number of conclusions, such as exercising more burns more calories, not all types of activities are created equal when it comes to losing weight, and calories burned doesn't have a obvious direct correlation with the numbers of steps you take in a day. However none of these conclusions is as important as the tracker usage trends discovered for healthy individuals and overweight individuals. 
 
 With these two trends there are targeted marketing opportunities. To target the overweight public that wants to lose weight, there can be marketing done with weight loss in mind, while for the healthy public, the products can be marketed as something that helps you keep track and make sure you are meeting your doctors recommendations.
+
