@@ -729,6 +729,14 @@ From our analysis we can draw a number of conclusions, such as exercising more b
 
 With these two trends there are targeted marketing opportunities. To target the overweight public that wants to lose weight, there can be marketing done with weight loss in mind, while for the healthy public, the products can be marketed as something that helps you keep track and make sure you are meeting your doctors recommendations.
 
+
+
+
+
+
+
+
+
 <script type="text/javascript" charset="utf-8" 
 src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,
 https://vincenttam.github.io/javascripts/MathJaxLocal.js"></script>
